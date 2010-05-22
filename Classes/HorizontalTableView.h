@@ -1,7 +1,17 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PageLoopView : UIView {
+@class HorizontalTableView;
+
+@protocol HorizontalTableViewDelegate
+
+
+
+@end
+
+
+
+@interface HorizontalTableView : UIView {
 	NSMutableArray *_pageViews;
 	UIScrollView *_scrollView;
 	NSUInteger _currentPageIndex;

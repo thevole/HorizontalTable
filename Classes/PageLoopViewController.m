@@ -11,7 +11,7 @@
 
 @implementation PageLoopViewController
 
-@synthesize pageLoopView;
+@synthesize tableView;
 
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -48,12 +48,12 @@
 - (void)viewDidUnload {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
-    self.pageLoopView = nil;
+    self.tableView = nil;
 }
 
 
 - (void)dealloc {
-    [pageLoopView release], pageLoopView = nil;
+    [tableView release], tableView = nil;
     [super dealloc];
 }
 

@@ -12,7 +12,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
-		5B50846C11A6E69200791658 /* PageLoopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B50846B11A6E69200791658 /* PageLoopView.m */; };
+		5B50846C11A6E69200791658 /* HorizontalTableView.h.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B50846B11A6E69200791658 /* HorizontalTableView.h.m */; };
 		5B50848D11A6E76500791658 /* image1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B50848C11A6E76500791658 /* image1.png */; };
 		5B50849111A6E79800791658 /* image2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B50849011A6E79800791658 /* image2.png */; };
 		5B50849311A6E7B000791658 /* image3.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B50849211A6E7B000791658 /* image3.png */; };
@@ -30,8 +30,8 @@
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Scroller_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scroller_Prefix.pch; sourceTree = "<group>"; };
-		5B50846A11A6E69200791658 /* PageLoopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageLoopView.h; sourceTree = "<group>"; };
-		5B50846B11A6E69200791658 /* PageLoopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageLoopView.m; sourceTree = "<group>"; };
+		5B50846A11A6E69200791658 /* HorizontalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalTableView.h; sourceTree = "<group>"; };
+		5B50846B11A6E69200791658 /* HorizontalTableView.h.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalTableView.h.m; sourceTree = "<group>"; };
 		5B50848C11A6E76500791658 /* image1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image1.png; sourceTree = "<group>"; };
 		5B50849011A6E79800791658 /* image2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image2.png; sourceTree = "<group>"; };
 		5B50849211A6E7B000791658 /* image3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image3.png; sourceTree = "<group>"; };
@@ -59,8 +59,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				5B50846A11A6E69200791658 /* PageLoopView.h */,
-				5B50846B11A6E69200791658 /* PageLoopView.m */,
+				5B50846A11A6E69200791658 /* HorizontalTableView.h */,
+				5B50846B11A6E69200791658 /* HorizontalTableView.h.m */,
 				1D3623240D0F684500981E51 /* ScrollerAppDelegate.h */,
 				1D3623250D0F684500981E51 /* ScrollerAppDelegate.m */,
 				5B88014811A88BA400C7895C /* PageLoopViewController.h */,
@@ -180,7 +180,7 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* ScrollerAppDelegate.m in Sources */,
-				5B50846C11A6E69200791658 /* PageLoopView.m in Sources */,
+				5B50846C11A6E69200791658 /* HorizontalTableView.h.m in Sources */,
 				5B88014B11A88BA400C7895C /* PageLoopViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

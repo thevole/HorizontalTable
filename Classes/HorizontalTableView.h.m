@@ -1,8 +1,8 @@
 
-#import "PageLoopView.h"
+#import "HorizontalTableView.h"
 
 
-@interface PageLoopView () <UIScrollViewDelegate>
+@interface HorizontalTableView() <UIScrollViewDelegate>
 
 @property (nonatomic, retain) NSMutableArray *pageViews;
 @property (nonatomic, retain) UIScrollView *scrollView;
@@ -16,7 +16,7 @@
 @end
 
 
-@implementation PageLoopView
+@implementation HorizontalTableView
 
 @synthesize pageViews=_pageViews, scrollView=_scrollView, currentPageIndex=_currentPageIndex;
 

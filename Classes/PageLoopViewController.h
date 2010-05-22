@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class PageLoopView;
+@class HorizontalTableView;
 
 @interface PageLoopViewController : UIViewController {
-    PageLoopView *pageLoopView;
+    HorizontalTableView *tableView;
 }
 
-@property (nonatomic, retain) IBOutlet PageLoopView *pageLoopView;
+@property (nonatomic, retain) IBOutlet HorizontalTableView *tableView;
 
 @end
