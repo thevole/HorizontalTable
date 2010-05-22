@@ -1,13 +1,19 @@
+//
+//  PageLoopViewController.h
+//  Scroller
+//
+//  Created by Martin Volerich on 5/22/10.
+//  Copyright 2010 Bill Bear Technologies. All rights reserved.
+//
 
 #import <UIKit/UIKit.h>
 
+@class PageLoopView;
+
 @interface PageLoopViewController : UIViewController {
-	NSMutableArray *_pageViews;
-	UIScrollView *_scrollView;
-	NSUInteger _currentPageIndex;
-	NSUInteger _currentPhysicalPageIndex;
-	BOOL _pageLoopEnabled;
-	BOOL _rotationInProgress;
+    PageLoopView *pageLoopView;
 }
+
+@property (nonatomic, retain) IBOutlet PageLoopView *pageLoopView;
 
 @end
