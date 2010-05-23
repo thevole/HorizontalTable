@@ -13,6 +13,9 @@
 - (void)layoutPages;
 - (void)currentPageIndexDidChange;
 - (NSUInteger)numberOfPages;
+- (void)layoutPhysicalPage:(NSUInteger)pageIndex;
+- (UIView *)viewForPhysicalPage:(NSUInteger)pageIndex;
+- (void)removeColumn:(NSInteger)index;
 
 @end
 
@@ -97,21 +100,44 @@
     [self prepareView];
 }
 
+- (void)removeColumn:(NSInteger)index {
+    if ([self.pageViews objectAtIndex:index] != [NSNull null]) {
+        DLog(@"Removing view at position %d", index);
+        UIView *vw = [self.pageViews objectAtIndex:index];
+        [vw removeFromSuperview];
+        [self.pageViews replaceObjectAtIndex:index withObject:[NSNull null]];
+    }
+}
+
 - (void)currentPageIndexDidChange {
     CGSize pageSize = [self pageSize];
     CGFloat columnWidth = [self columnWidth];
     _visibleColumnCount = pageSize.width / columnWidth + 2;
     
-	[self layoutPhysicalPage:_currentPhysicalPageIndex];
+    NSInteger leftMostPageIndex = -1;
+    NSInteger rightMostPageIndex = 0;
     
-    for (NSInteger i = 0; i < _visibleColumnCount; i++) {
-        NSUInteger index = _currentPhysicalPageIndex + i;
-        if (index < [self.pageViews count])
-            [self layoutPhysicalPage:_currentPhysicalPageIndex + i];
+    for (NSInteger i = -2; i < _visibleColumnCount; i++) {
+        NSInteger index = _currentPhysicalPageIndex + i;
+        if (index < [self.pageViews count] && (index >= 0)) {
+            [self layoutPhysicalPage:index];
+            if (leftMostPageIndex < 0)
+                leftMostPageIndex = index;
+            rightMostPageIndex = index;
+        }
     }
+    
+    // clear out views to the left
+    for (NSInteger i = 0; i < leftMostPageIndex; i++) {
+        [self removeColumn:i];
+    }
+    
+    // clear out views to the right
+    for (NSInteger i = rightMostPageIndex + 1; i < [self.pageViews count]; i++) {
+        [self removeColumn:i];
+    }
+
  
-	if (_currentPhysicalPageIndex > 0)
-		[self layoutPhysicalPage:_currentPhysicalPageIndex-1];
 }
 
 - (void)layoutPages {
@@ -155,7 +181,7 @@
 #pragma mark UIScrollViewDelegate methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    DLog(@"Did Scroll");
+    //DLog(@"Did Scroll");
 	if (_rotationInProgress)
 		return; // UIScrollView layoutSubviews code adjusts contentOffset, breaking our logic
 	

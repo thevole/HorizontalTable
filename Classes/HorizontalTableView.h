@@ -20,7 +20,7 @@
 	NSUInteger _currentPhysicalPageIndex;
 	BOOL _rotationInProgress;
     
-    NSUInteger _visibleColumnCount;
+    NSInteger _visibleColumnCount;
     NSNumber *_columnWidth;
     
     id _delegate;
