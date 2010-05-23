@@ -12,6 +12,7 @@
 @implementation PageLoopViewController
 
 @synthesize tableView;
+@synthesize columnView;
 
 #pragma mark -
 #pragma mark Memory management
@@ -29,11 +30,13 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     self.tableView = nil;
+    self.columnView = nil;
 }
 
 
 - (void)dealloc {
     [tableView release], tableView = nil;
+    [columnView release], columnView = nil;
     [super dealloc];
 }
 
@@ -85,23 +88,14 @@
 
 - (UIView *)tableView:(HorizontalTableView *)aTableView viewForIndex:(NSInteger)index {
     
-    CGFloat height = aTableView.bounds.size.height;
-    CGFloat width = 150.0f;
-    
     UIView *vw = [aTableView dequeueColumnView];
     if (!vw) {
         DLog(@"Constructing new view");
-        vw = [[UIView alloc] init];
-        vw.frame = CGRectMake(0.0f, 0.0f, width, height);
-        vw.contentMode = UIViewContentModeScaleToFill;
-        UILabel *lbl = [[UILabel alloc] initWithFrame:vw.bounds];
-        lbl.text = [NSString stringWithFormat:@"%d", index];
-        lbl.textColor = [UIColor redColor];
-        lbl.tag = 1234;
-        lbl.backgroundColor = [UIColor clearColor];
-        lbl.textAlignment = UITextAlignmentCenter;
-        lbl.font = [UIFont boldSystemFontOfSize:24.0f];
-        [vw addSubview:lbl];
+        
+        [[NSBundle mainBundle] loadNibNamed:@"ColumnView" owner:self options:nil];
+        vw = self.columnView;
+        self.columnView = nil;
+        
     }
     [vw setBackgroundColor:[colors objectAtIndex:index]];
 
@@ -109,7 +103,7 @@
     UILabel *lbl = (UILabel *)[vw viewWithTag:1234];
     lbl.text = [NSString stringWithFormat:@"%d", index];
     
-	return [vw autorelease];
+	return vw;
 }
 
 - (CGFloat)columnWidthForTableView:(HorizontalTableView *)tableView {

@@ -15,6 +15,7 @@
 		5B18624E11A951930028EB1E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B18624D11A951930028EB1E /* QuartzCore.framework */; };
 		5B50846C11A6E69200791658 /* HorizontalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B50846B11A6E69200791658 /* HorizontalTableView.m */; };
 		5B5084E811A6EB8800791658 /* ipadicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B5084E711A6EB8800791658 /* ipadicon.png */; };
+		5B83CCE911A992F2002573B0 /* ColumnView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B83CCE811A992F2002573B0 /* ColumnView.xib */; };
 		5B88014B11A88BA400C7895C /* PageLoopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B88014911A88BA400C7895C /* PageLoopViewController.m */; };
 		5B88014C11A88BA400C7895C /* PageLoopViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B88014A11A88BA400C7895C /* PageLoopViewController.xib */; };
 /* End PBXBuildFile section */
@@ -32,6 +33,7 @@
 		5B50846A11A6E69200791658 /* HorizontalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalTableView.h; sourceTree = "<group>"; };
 		5B50846B11A6E69200791658 /* HorizontalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalTableView.m; sourceTree = "<group>"; };
 		5B5084E711A6EB8800791658 /* ipadicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipadicon.png; sourceTree = "<group>"; };
+		5B83CCE811A992F2002573B0 /* ColumnView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColumnView.xib; sourceTree = "<group>"; };
 		5B88014811A88BA400C7895C /* PageLoopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageLoopViewController.h; sourceTree = "<group>"; };
 		5B88014911A88BA400C7895C /* PageLoopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageLoopViewController.m; sourceTree = "<group>"; };
 		5B88014A11A88BA400C7895C /* PageLoopViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PageLoopViewController.xib; path = Classes/PageLoopViewController.xib; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				5B88014A11A88BA400C7895C /* PageLoopViewController.xib */,
 				5B5084E711A6EB8800791658 /* ipadicon.png */,
 				8D1107310486CEB800E47090 /* Scroller-Info.plist */,
+				5B83CCE811A992F2002573B0 /* ColumnView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -160,6 +163,7 @@
 			files = (
 				5B5084E811A6EB8800791658 /* ipadicon.png in Resources */,
 				5B88014C11A88BA400C7895C /* PageLoopViewController.xib in Resources */,
+				5B83CCE911A992F2002573B0 /* ColumnView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

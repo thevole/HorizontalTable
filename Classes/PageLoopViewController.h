@@ -13,8 +13,11 @@
     HorizontalTableView *tableView;
     
     NSArray *colors;
+    
+    UIView *columnView;
 }
 
 @property (nonatomic, retain) IBOutlet HorizontalTableView *tableView;
+@property (nonatomic, retain) IBOutlet UIView *columnView;
 
 @end

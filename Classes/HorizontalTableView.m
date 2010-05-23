@@ -117,7 +117,7 @@
         [self.columnPool removeLastObject];
         DLog(@"Supply from reuse pool");
     }
-    return vw;
+    return [vw autorelease];
 }
 
 - (void)removeColumn:(NSInteger)index {
@@ -183,14 +183,20 @@
     _columnWidth = nil;
     [self setClipsToBounds:YES];
     
-	self.scrollView = [[[UIScrollView alloc] init] autorelease];
+    self.autoresizesSubviews = YES;
+    
+    UIScrollView *scroller = [[UIScrollView alloc] init];
     CGRect rect = self.bounds;
-    self.scrollView.frame = rect;
-	self.scrollView.delegate = self;
+    scroller.frame = rect;
+	scroller.delegate = self;
+    scroller.autoresizesSubviews = YES;
+    
 	//self.scrollView.pagingEnabled = YES;
-	self.scrollView.showsHorizontalScrollIndicator = NO;
-	self.scrollView.showsVerticalScrollIndicator = NO;
-	[self addSubview:self.scrollView];
+	scroller.showsHorizontalScrollIndicator = YES;
+	scroller.showsVerticalScrollIndicator = YES;
+    self.scrollView = scroller;
+	[self addSubview:scroller];
+    [scroller release], scroller = nil;
     
 	[self refreshData];
 }
