@@ -73,7 +73,8 @@
 }
 
 - (CGSize)pageSize {
-	return self.scrollView.frame.size;
+    CGRect rect = self.scrollView.bounds;
+	return rect.size;
 }
 
 - (CGFloat)columnWidth {
@@ -190,10 +191,11 @@
     scroller.frame = rect;
 	scroller.delegate = self;
     scroller.autoresizesSubviews = YES;
+    scroller.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
 	//self.scrollView.pagingEnabled = YES;
 	scroller.showsHorizontalScrollIndicator = YES;
-	scroller.showsVerticalScrollIndicator = YES;
+	scroller.showsVerticalScrollIndicator = NO;
     self.scrollView = scroller;
 	[self addSubview:scroller];
     [scroller release], scroller = nil;
