@@ -59,7 +59,7 @@
 		pageView = [self loadViewForPage:pageIndex];
 		[self.pageViews replaceObjectAtIndex:pageIndex withObject:pageView];
 		[self.scrollView addSubview:pageView];
-		NSLog(@"View loaded for page %d", pageIndex);
+		DLog(@"View loaded for page %d", pageIndex);
 	} else {
 		pageView = [self.pageViews objectAtIndex:pageIndex];
 	}
@@ -172,7 +172,7 @@
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-	NSLog(@"scrollViewDidEndDecelerating");
+	DLog(@"scrollViewDidEndDecelerating");
 	NSUInteger physicalPage = self.physicalPageIndex;
 	NSUInteger properPage = [self physicalPageForPage:[self pageForPhysicalPage:physicalPage]];
 	if (physicalPage != properPage)
