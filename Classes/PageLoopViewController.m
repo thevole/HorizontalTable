@@ -49,12 +49,21 @@
 }
 */
 
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSMutableArray *colorArray = [[NSMutableArray alloc] init];
+    NSInteger step = 10;
+    for (NSInteger i = 0; i < 255; i += step) {
+        CGFloat f = (float)i/255.0f;
+        UIColor *clr = [UIColor colorWithRed:f green:f blue:f alpha:1.0f];
+        [colorArray addObject:clr];
+    }
+    colors = colorArray;
+    [self.tableView refreshData];    
 }
-*/
+
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -66,22 +75,31 @@
 #pragma mark HorizontalTableViewDelegate methods
 
 - (NSInteger)numberOfColumnsForTableView:(HorizontalTableView *)tableView {
-    return 3;
+    return [colors count];
 }
 
 - (UIView *)tableView:(HorizontalTableView *)aTableView viewForIndex:(NSInteger)index {
-    UIImage *image = nil;
-	switch(index) {
-		case 0: image = [UIImage imageNamed:@"image1.png"]; break;
-		case 1: image = [UIImage imageNamed:@"image2.png"]; break;
-		case 2: image = [UIImage imageNamed:@"image3.png"]; break;
-	}
-	UIImageView *pageView = [[[UIImageView alloc] initWithImage:image] autorelease];
-    CGRect rect = aTableView.bounds;
-    pageView.frame = rect;
+    
+    CGFloat height = aTableView.bounds.size.height;
+    CGFloat width = 150.0f;
+    UIView *pageView = [[UIView alloc] init];
+    pageView.frame = CGRectMake(0.0f, 0.0f, width, height);
+    [pageView setBackgroundColor:[colors objectAtIndex:index]];
 	pageView.contentMode = UIViewContentModeScaleToFill;
-	return pageView;
+    
+    CGPoint centerPt = pageView.center;
+    UILabel *lbl = [[UILabel alloc] initWithFrame:pageView.bounds];
+    lbl.text = [NSString stringWithFormat:@"%d", index];
+    lbl.textColor = [UIColor redColor];
+    lbl.backgroundColor = [UIColor clearColor];
+    lbl.textAlignment = UITextAlignmentCenter;
+    lbl.font = [UIFont boldSystemFontOfSize:24.0f];
+    [pageView addSubview:lbl];
+    [lbl release];
+    
+	return [pageView autorelease];
 }
+
 
 
 

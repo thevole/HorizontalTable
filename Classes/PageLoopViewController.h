@@ -11,6 +11,8 @@
 
 @interface PageLoopViewController : UIViewController <HorizontalTableViewDelegate> {
     HorizontalTableView *tableView;
+    
+    NSArray *colors;
 }
 
 @property (nonatomic, retain) IBOutlet HorizontalTableView *tableView;

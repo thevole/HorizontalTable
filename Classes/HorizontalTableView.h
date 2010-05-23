@@ -24,4 +24,6 @@
 
 @property (assign) IBOutlet id<HorizontalTableViewDelegate> delegate;
 
+- (void)refreshData;
+
 @end

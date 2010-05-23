@@ -12,6 +12,9 @@
 - (NSUInteger)physicalPageForPage:(NSUInteger)page;
 - (NSUInteger)pageForPhysicalPage:(NSUInteger)physicalPage;
 - (void)prepareView;
+- (void)layoutPages;
+- (void)currentPageIndexDidChange;
+- (NSUInteger)numberOfPages;
 
 @end
 
@@ -24,16 +27,18 @@
 @synthesize delegate=_delegate;
 
 
-- (CGRect)alignView:(UIView *)view forPage:(NSUInteger)pageIndex inRect:(CGRect)rect {
-	UIImageView *imageView = (UIImageView *)view;
-	CGSize imageSize = imageView.image.size;
-	CGFloat ratioX = rect.size.width / imageSize.width, ratioY = rect.size.height / imageSize.height;
-	CGSize size = (ratioX < ratioY ?
-				   CGSizeMake(rect.size.width, ratioX * imageSize.height) :
-				   CGSizeMake(ratioY * imageSize.width, rect.size.height));
-	return CGRectMake(rect.origin.x + (rect.size.width - size.width) / 2,
-					  rect.origin.y + (rect.size.height - size.height) / 2,
-					  size.width, size.height);
+- (void)refreshData {
+    self.pageViews = [NSMutableArray array];
+	// to save time and memory, we won't load the page views immediately
+	NSUInteger numberOfPhysicalPages = [self numberOfPages];
+	for (NSUInteger i = 0; i < numberOfPhysicalPages; ++i)
+		[self.pageViews addObject:[NSNull null]];
+    
+    if ([self.pageViews count] > 0) {
+        [self layoutPages];
+        [self currentPageIndexDidChange];
+        [self setPhysicalPageIndex:[self physicalPageForPage:_currentPageIndex]];
+    }
 }
 
 - (NSUInteger)numberOfPages {
@@ -72,8 +77,10 @@
 
 - (void)layoutPhysicalPage:(NSUInteger)pageIndex {
 	UIView *pageView = [self viewForPhysicalPage:pageIndex];
+    CGFloat viewWidth = pageView.bounds.size.width;
 	CGSize pageSize = [self pageSize];
-	pageView.frame = [self alignView:pageView forPage:[self pageForPhysicalPage:pageIndex] inRect:CGRectMake(pageIndex * pageSize.width, 0, pageSize.width, pageSize.height)];
+    CGRect rect = CGRectMake(viewWidth * pageIndex, 0, viewWidth, pageSize.height);
+	pageView.frame = rect;
 }
 
 - (void) awakeFromNib {
@@ -108,15 +115,7 @@
 	self.scrollView.showsVerticalScrollIndicator = NO;
 	[self addSubview:self.scrollView];
     
-	self.pageViews = [NSMutableArray array];
-	// to save time and memory, we won't load the page views immediately
-	NSUInteger numberOfPhysicalPages = [self numberOfPages];
-	for (NSUInteger i = 0; i < numberOfPhysicalPages; ++i)
-		[self.pageViews addObject:[NSNull null]];
-    
-    [self layoutPages];
-	[self currentPageIndexDidChange];
-	[self setPhysicalPageIndex:[self physicalPageForPage:_currentPageIndex]];
+	[self refreshData];
 }
 
 
@@ -185,9 +184,9 @@
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
 	// resize and reposition the page view, but use the current contentOffset as page origin
 	// (note that the scrollview has already been resized by the time this method is called)
-	CGSize pageSize = [self pageSize];
-	UIView *pageView = [self viewForPhysicalPage:_currentPhysicalPageIndex];
-	pageView.frame = [self alignView:pageView forPage:_currentPageIndex inRect:CGRectMake(self.scrollView.contentOffset.x, 0, pageSize.width, pageSize.height)];
+	//CGSize pageSize = [self pageSize];
+	//UIView *pageView = [self viewForPhysicalPage:_currentPhysicalPageIndex];
+	//pageView.frame = [self alignView:pageView forPage:_currentPageIndex inRect:CGRectMake(self.scrollView.contentOffset.x, 0, pageSize.width, pageSize.height)];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
