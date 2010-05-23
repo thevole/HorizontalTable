@@ -92,7 +92,6 @@
     [pageView setBackgroundColor:[colors objectAtIndex:index]];
 	pageView.contentMode = UIViewContentModeScaleToFill;
     
-    CGPoint centerPt = pageView.center;
     UILabel *lbl = [[UILabel alloc] initWithFrame:pageView.bounds];
     lbl.text = [NSString stringWithFormat:@"%d", index];
     lbl.textColor = [UIColor redColor];
@@ -104,9 +103,6 @@
     
 	return [pageView autorelease];
 }
-
-
-
 
 
 @end

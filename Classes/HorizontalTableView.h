@@ -19,6 +19,8 @@
 	NSUInteger _currentPhysicalPageIndex;
 	BOOL _rotationInProgress;
     
+    NSUInteger _visibleColumnCount;
+    
     id _delegate;
 }
 

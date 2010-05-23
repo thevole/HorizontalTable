@@ -79,6 +79,9 @@
 	UIView *pageView = [self viewForPhysicalPage:pageIndex];
     CGFloat viewWidth = pageView.bounds.size.width;
 	CGSize pageSize = [self pageSize];
+    
+    _visibleColumnCount = pageSize.width / viewWidth + 1;
+    
     CGRect rect = CGRectMake(viewWidth * pageIndex, 0, viewWidth, pageSize.height);
 	pageView.frame = rect;
 }
@@ -89,8 +92,13 @@
 
 - (void)currentPageIndexDidChange {
 	[self layoutPhysicalPage:_currentPhysicalPageIndex];
-	if (_currentPhysicalPageIndex+1 < [self.pageViews count])
-		[self layoutPhysicalPage:_currentPhysicalPageIndex+1];
+    
+    for (NSInteger i = 0; i < _visibleColumnCount; i++) {
+        NSUInteger index = _currentPhysicalPageIndex + i;
+        if (index < [self.pageViews count])
+            [self layoutPhysicalPage:_currentPhysicalPageIndex + i];
+    }
+ 
 	if (_currentPhysicalPageIndex > 0)
 		[self layoutPhysicalPage:_currentPhysicalPageIndex-1];
 }
