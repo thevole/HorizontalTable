@@ -7,7 +7,7 @@
 //
 
 #import "PageLoopViewController.h"
-
+#import <QuartzCore/QuartzCore.h>
 
 @implementation PageLoopViewController
 
@@ -53,6 +53,11 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    CALayer *layer = [self.tableView layer];
+    [layer setCornerRadius:15.0f];
+    
+    
     NSMutableArray *colorArray = [[NSMutableArray alloc] init];
     NSInteger step = 10;
     for (NSInteger i = 0; i < 255; i += step) {

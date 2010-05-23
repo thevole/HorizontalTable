@@ -106,6 +106,8 @@
 
 - (void)prepareView {
 	
+    [self setClipsToBounds:YES];
+    
 	self.scrollView = [[[UIScrollView alloc] init] autorelease];
     CGRect rect = self.bounds;
     self.scrollView.frame = rect;
