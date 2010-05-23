@@ -87,21 +87,29 @@
     
     CGFloat height = aTableView.bounds.size.height;
     CGFloat width = 150.0f;
-    UIView *pageView = [[UIView alloc] init];
-    pageView.frame = CGRectMake(0.0f, 0.0f, width, height);
-    [pageView setBackgroundColor:[colors objectAtIndex:index]];
-	pageView.contentMode = UIViewContentModeScaleToFill;
     
-    UILabel *lbl = [[UILabel alloc] initWithFrame:pageView.bounds];
+    UIView *vw = [aTableView dequeueColumnView];
+    if (!vw) {
+        DLog(@"Constructing new view");
+        vw = [[UIView alloc] init];
+        vw.frame = CGRectMake(0.0f, 0.0f, width, height);
+        vw.contentMode = UIViewContentModeScaleToFill;
+        UILabel *lbl = [[UILabel alloc] initWithFrame:vw.bounds];
+        lbl.text = [NSString stringWithFormat:@"%d", index];
+        lbl.textColor = [UIColor redColor];
+        lbl.tag = 1234;
+        lbl.backgroundColor = [UIColor clearColor];
+        lbl.textAlignment = UITextAlignmentCenter;
+        lbl.font = [UIFont boldSystemFontOfSize:24.0f];
+        [vw addSubview:lbl];
+    }
+    [vw setBackgroundColor:[colors objectAtIndex:index]];
+
+    
+    UILabel *lbl = (UILabel *)[vw viewWithTag:1234];
     lbl.text = [NSString stringWithFormat:@"%d", index];
-    lbl.textColor = [UIColor redColor];
-    lbl.backgroundColor = [UIColor clearColor];
-    lbl.textAlignment = UITextAlignmentCenter;
-    lbl.font = [UIFont boldSystemFontOfSize:24.0f];
-    [pageView addSubview:lbl];
-    [lbl release];
     
-	return [pageView autorelease];
+	return [vw autorelease];
 }
 
 - (CGFloat)columnWidthForTableView:(HorizontalTableView *)tableView {

@@ -1,6 +1,7 @@
 
 #import "HorizontalTableView.h"
 
+#define kColumnPoolSize 3
 
 @interface HorizontalTableView() <UIScrollViewDelegate>
 
@@ -8,6 +9,7 @@
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, readonly) NSUInteger currentPageIndex;
 @property (nonatomic) NSUInteger physicalPageIndex;
+@property (nonatomic, retain) NSMutableArray *columnPool;
 
 - (void)prepareView;
 - (void)layoutPages;
@@ -26,6 +28,8 @@
 @synthesize scrollView=_scrollView;
 @synthesize currentPageIndex=_currentPageIndex;
 @synthesize delegate=_delegate;
+@synthesize columnPool=_columnPool;
+
 
 
 - (void)refreshData {
@@ -100,10 +104,27 @@
     [self prepareView];
 }
 
+- (void)queueColumnView:(UIView *)vw {
+    if ([self.columnPool count] >= kColumnPoolSize) {
+        return;
+    }
+    [self.columnPool addObject:vw];
+}
+
+- (UIView *)dequeueColumnView {
+    UIView *vw = [[self.columnPool lastObject] retain];
+    if (vw) {
+        [self.columnPool removeLastObject];
+        DLog(@"Supply from reuse pool");
+    }
+    return vw;
+}
+
 - (void)removeColumn:(NSInteger)index {
     if ([self.pageViews objectAtIndex:index] != [NSNull null]) {
         DLog(@"Removing view at position %d", index);
         UIView *vw = [self.pageViews objectAtIndex:index];
+        [self queueColumnView:vw];
         [vw removeFromSuperview];
         [self.pageViews replaceObjectAtIndex:index withObject:[NSNull null]];
     }
@@ -149,8 +170,16 @@
 			[self layoutPhysicalPage:pageIndex];
 }
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        [self prepareView];
+    }
+    return self;
+}
+
 - (void)prepareView {
-	
+	_columnPool = [[NSMutableArray alloc] initWithCapacity:kColumnPoolSize];
     _columnWidth = nil;
     [self setClipsToBounds:YES];
     
@@ -236,6 +265,8 @@
 
 
 - (void)dealloc {
+    [_columnPool release], _columnPool = nil;
+    [_columnWidth release], _columnWidth = nil;
     [_pageViews release], _pageViews = nil;
     [_scrollView release], _scrollView = nil;
     [super dealloc];

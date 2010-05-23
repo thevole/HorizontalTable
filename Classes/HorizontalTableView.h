@@ -24,10 +24,13 @@
     NSNumber *_columnWidth;
     
     id _delegate;
+    
+    NSMutableArray *_columnPool;
 }
 
 @property (assign) IBOutlet id<HorizontalTableViewDelegate> delegate;
 
 - (void)refreshData;
+- (UIView *)dequeueColumnView;
 
 @end
