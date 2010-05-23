@@ -5,7 +5,8 @@
 
 @protocol HorizontalTableViewDelegate
 
-
+- (NSInteger)numberOfColumnsForTableView:(HorizontalTableView *)tableView;
+- (UIView *)tableView:(HorizontalTableView *)tableView viewForIndex:(NSInteger)index;
 
 @end
 
@@ -16,8 +17,11 @@
 	UIScrollView *_scrollView;
 	NSUInteger _currentPageIndex;
 	NSUInteger _currentPhysicalPageIndex;
-	BOOL _pageLoopEnabled;
 	BOOL _rotationInProgress;
+    
+    id _delegate;
 }
+
+@property (assign) IBOutlet id<HorizontalTableViewDelegate> delegate;
 
 @end

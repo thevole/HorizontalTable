@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HorizontalTableView.h"
 
-@class HorizontalTableView;
-
-@interface PageLoopViewController : UIViewController {
+@interface PageLoopViewController : UIViewController <HorizontalTableViewDelegate> {
     HorizontalTableView *tableView;
 }
 

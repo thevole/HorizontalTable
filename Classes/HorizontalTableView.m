@@ -18,21 +18,11 @@
 
 @implementation HorizontalTableView
 
-@synthesize pageViews=_pageViews, scrollView=_scrollView, currentPageIndex=_currentPageIndex;
+@synthesize pageViews=_pageViews;
+@synthesize scrollView=_scrollView;
+@synthesize currentPageIndex=_currentPageIndex;
+@synthesize delegate=_delegate;
 
-
-
-- (UIView *)loadViewForPage:(NSUInteger)pageIndex {
-	UIImage *image = nil;
-	switch(pageIndex % 3) {
-		case 0: image = [UIImage imageNamed:@"image1.png"]; break;
-		case 1: image = [UIImage imageNamed:@"image2.png"]; break;
-		case 2: image = [UIImage imageNamed:@"image3.png"]; break;
-	}
-	UIImageView *pageView = [[[UIImageView alloc] initWithImage:image] autorelease];
-	pageView.contentMode = UIViewContentModeScaleToFill;
-	return pageView;
-}
 
 - (CGRect)alignView:(UIView *)view forPage:(NSUInteger)pageIndex inRect:(CGRect)rect {
 	UIImageView *imageView = (UIImageView *)view;
@@ -47,7 +37,10 @@
 }
 
 - (NSUInteger)numberOfPages {
-	return 3;
+	NSInteger numPages = 0;
+    if (_delegate)
+        numPages = [_delegate numberOfColumnsForTableView:self];
+    return numPages;
 }
 
 - (UIView *)viewForPhysicalPage:(NSUInteger)pageIndex {
@@ -56,10 +49,13 @@
 	
 	UIView *pageView;
 	if ([self.pageViews objectAtIndex:pageIndex] == [NSNull null]) {
-		pageView = [self loadViewForPage:pageIndex];
-		[self.pageViews replaceObjectAtIndex:pageIndex withObject:pageView];
-		[self.scrollView addSubview:pageView];
-		DLog(@"View loaded for page %d", pageIndex);
+        
+        if (_delegate) {
+            pageView = [_delegate tableView:self viewForIndex:pageIndex];
+            [self.pageViews replaceObjectAtIndex:pageIndex withObject:pageView];
+            [self.scrollView addSubview:pageView];
+            DLog(@"View loaded for page %d", pageIndex);
+        }
 	} else {
 		pageView = [self.pageViews objectAtIndex:pageIndex];
 	}
@@ -102,7 +98,6 @@
 }
 
 - (void)prepareView {
-	_pageLoopEnabled = YES;
 	
 	self.scrollView = [[[UIScrollView alloc] init] autorelease];
     CGRect rect = self.bounds;
@@ -115,7 +110,7 @@
     
 	self.pageViews = [NSMutableArray array];
 	// to save time and memory, we won't load the page views immediately
-	NSUInteger numberOfPhysicalPages = (_pageLoopEnabled ? 3 * [self numberOfPages] : [self numberOfPages]);
+	NSUInteger numberOfPhysicalPages = [self numberOfPages];
 	for (NSUInteger i = 0; i < numberOfPhysicalPages; ++i)
 		[self.pageViews addObject:[NSNull null]];
     
@@ -143,17 +138,12 @@
 
 - (NSUInteger)physicalPageForPage:(NSUInteger)page {
 	NSParameterAssert(page < [self numberOfPages]);
-	return (_pageLoopEnabled ? page + [self numberOfPages] : page);
+	return page;
 }
 
 - (NSUInteger)pageForPhysicalPage:(NSUInteger)physicalPage {
-	if (_pageLoopEnabled) {
-		NSParameterAssert(physicalPage < 3 * [self numberOfPages]);
-		return physicalPage % [self numberOfPages];
-	} else {
-		NSParameterAssert(physicalPage < [self numberOfPages]);
-		return physicalPage;
-	} 
+    NSParameterAssert(physicalPage < [self numberOfPages]);
+    return physicalPage;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
