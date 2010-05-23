@@ -104,5 +104,8 @@
 	return [pageView autorelease];
 }
 
+- (CGFloat)columnWidthForTableView:(HorizontalTableView *)tableView {
+    return 150.0f;
+}
 
 @end

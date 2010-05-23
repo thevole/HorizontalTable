@@ -9,8 +9,6 @@
 @property (nonatomic, readonly) NSUInteger currentPageIndex;
 @property (nonatomic) NSUInteger physicalPageIndex;
 
-- (NSUInteger)physicalPageForPage:(NSUInteger)page;
-- (NSUInteger)pageForPhysicalPage:(NSUInteger)physicalPage;
 - (void)prepareView;
 - (void)layoutPages;
 - (void)currentPageIndexDidChange;
@@ -37,7 +35,7 @@
     if ([self.pageViews count] > 0) {
         [self layoutPages];
         [self currentPageIndexDidChange];
-        [self setPhysicalPageIndex:[self physicalPageForPage:_currentPageIndex]];
+ //       [self setPhysicalPageIndex:[self physicalPageForPage:_currentPageIndex]];
     }
 }
 
@@ -71,6 +69,17 @@
 	return self.scrollView.frame.size;
 }
 
+- (CGFloat)columnWidth {
+    if (!_columnWidth) {
+        if (_delegate) {
+            CGFloat width = [_delegate columnWidthForTableView:self];
+            _columnWidth = [[NSNumber numberWithFloat:width] retain];
+        }
+    }
+    return [_columnWidth floatValue];
+
+}
+
 - (BOOL)isPhysicalPageLoaded:(NSUInteger)pageIndex {
 	return [self.pageViews objectAtIndex:pageIndex] != [NSNull null];
 }
@@ -79,8 +88,6 @@
 	UIView *pageView = [self viewForPhysicalPage:pageIndex];
     CGFloat viewWidth = pageView.bounds.size.width;
 	CGSize pageSize = [self pageSize];
-    
-    _visibleColumnCount = pageSize.width / viewWidth + 1;
     
     CGRect rect = CGRectMake(viewWidth * pageIndex, 0, viewWidth, pageSize.height);
 	pageView.frame = rect;
@@ -91,6 +98,10 @@
 }
 
 - (void)currentPageIndexDidChange {
+    CGSize pageSize = [self pageSize];
+    CGFloat columnWidth = [self columnWidth];
+    _visibleColumnCount = pageSize.width / columnWidth + 2;
+    
 	[self layoutPhysicalPage:_currentPhysicalPageIndex];
     
     for (NSInteger i = 0; i < _visibleColumnCount; i++) {
@@ -105,7 +116,7 @@
 
 - (void)layoutPages {
 	CGSize pageSize = [self pageSize];
-	self.scrollView.contentSize = CGSizeMake([self.pageViews count] * pageSize.width, pageSize.height);
+	self.scrollView.contentSize = CGSizeMake([self.pageViews count] * [self columnWidth], pageSize.height);
 	// move all visible pages to their places, because otherwise they may overlap
 	for (NSUInteger pageIndex = 0; pageIndex < [self.pageViews count]; ++pageIndex)
 		if ([self isPhysicalPageLoaded:pageIndex])
@@ -114,6 +125,7 @@
 
 - (void)prepareView {
 	
+    _columnWidth = nil;
     [self setClipsToBounds:YES];
     
 	self.scrollView = [[[UIScrollView alloc] init] autorelease];
@@ -129,40 +141,28 @@
 }
 
 
-
-- (void)layyoutSubviews {
-    [self layoutPages];
-	[self currentPageIndexDidChange];
-	[self setPhysicalPageIndex:[self physicalPageForPage:_currentPageIndex]];
-}
-
 - (NSUInteger)physicalPageIndex {
-	CGSize pageSize = [self pageSize];
-	return (self.scrollView.contentOffset.x + pageSize.width / 2) / pageSize.width;
+    NSUInteger page = self.scrollView.contentOffset.x / [self columnWidth];
+    return page;
 }
 
 - (void)setPhysicalPageIndex:(NSUInteger)newIndex {
 	self.scrollView.contentOffset = CGPointMake(newIndex * [self pageSize].width, 0);
 }
 
-- (NSUInteger)physicalPageForPage:(NSUInteger)page {
-	NSParameterAssert(page < [self numberOfPages]);
-	return page;
-}
 
-- (NSUInteger)pageForPhysicalPage:(NSUInteger)physicalPage {
-    NSParameterAssert(physicalPage < [self numberOfPages]);
-    return physicalPage;
-}
+#pragma mark -
+#pragma mark UIScrollViewDelegate methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    DLog(@"Did Scroll");
 	if (_rotationInProgress)
 		return; // UIScrollView layoutSubviews code adjusts contentOffset, breaking our logic
 	
 	NSUInteger newPageIndex = self.physicalPageIndex;
 	if (newPageIndex == _currentPhysicalPageIndex) return;
 	_currentPhysicalPageIndex = newPageIndex;
-	_currentPageIndex = [self pageForPhysicalPage:_currentPhysicalPageIndex];
+	_currentPageIndex = newPageIndex;
 	
 	[self currentPageIndexDidChange];
 }
@@ -172,10 +172,6 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 	DLog(@"scrollViewDidEndDecelerating");
-	NSUInteger physicalPage = self.physicalPageIndex;
-	NSUInteger properPage = [self physicalPageForPage:[self pageForPhysicalPage:physicalPage]];
-	if (physicalPage != properPage)
-		self.physicalPageIndex = properPage;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

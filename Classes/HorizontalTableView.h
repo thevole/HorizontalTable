@@ -7,6 +7,7 @@
 
 - (NSInteger)numberOfColumnsForTableView:(HorizontalTableView *)tableView;
 - (UIView *)tableView:(HorizontalTableView *)tableView viewForIndex:(NSInteger)index;
+- (CGFloat)columnWidthForTableView:(HorizontalTableView *)tableView;
 
 @end
 
@@ -20,6 +21,7 @@
 	BOOL _rotationInProgress;
     
     NSUInteger _visibleColumnCount;
+    NSNumber *_columnWidth;
     
     id _delegate;
 }
