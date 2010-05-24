@@ -18,7 +18,6 @@
 	UIScrollView *_scrollView;
 	NSUInteger _currentPageIndex;
 	NSUInteger _currentPhysicalPageIndex;
-	BOOL _rotationInProgress;
     
     NSInteger _visibleColumnCount;
     NSNumber *_columnWidth;

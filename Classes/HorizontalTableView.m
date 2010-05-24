@@ -97,7 +97,7 @@
 	pageView.frame = rect;
 }
 
-- (void) awakeFromNib {
+- (void)awakeFromNib {
     [self prepareView];
 }
 
@@ -159,13 +159,8 @@
 }
 
 - (void)layoutPages {
-	//CGSize pageSize = [self pageSize];
     CGSize pageSize = self.bounds.size;
 	self.scrollView.contentSize = CGSizeMake([self.pageViews count] * [self columnWidth], pageSize.height);
-	// move all visible pages to their places, because otherwise they may overlap
-//	for (NSUInteger pageIndex = 0; pageIndex < [self.pageViews count]; ++pageIndex)
-//		if ([self isPhysicalPageLoaded:pageIndex])
-//			[self layoutPhysicalPage:pageIndex];
 }
 
 - (id)init {
@@ -216,8 +211,6 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     //DLog(@"Did Scroll");
-	if (_rotationInProgress)
-		return; // UIScrollView layoutSubviews code adjusts contentOffset, breaking our logic
 	
 	NSUInteger newPageIndex = self.physicalPageIndex;
 	if (newPageIndex == _currentPhysicalPageIndex) return;
@@ -241,22 +234,6 @@
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-	_rotationInProgress = YES;
-	
-	// hide other page views because they may overlap the current page during animation
-	for (NSUInteger pageIndex = 0; pageIndex < [self.pageViews count]; ++pageIndex)
-		if ([self isPhysicalPageLoaded:pageIndex])
-			[self viewForPhysicalPage:pageIndex].hidden = (pageIndex != _currentPhysicalPageIndex);
-}
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-	// resize and reposition the page view, but use the current contentOffset as page origin
-	// (note that the scrollview has already been resized by the time this method is called)
-	//CGSize pageSize = [self pageSize];
-	//UIView *pageView = [self viewForPhysicalPage:_currentPhysicalPageIndex];
-	//pageView.frame = [self alignView:pageView forPage:_currentPageIndex inRect:CGRectMake(self.scrollView.contentOffset.x, 0, pageSize.width, pageSize.height)];
-}
 
 - (void)layoutSubviews {
     [self layoutPages];
@@ -273,7 +250,6 @@
 		if ([self isPhysicalPageLoaded:pageIndex])
 			[self viewForPhysicalPage:pageIndex].hidden = NO;
 	
-	_rotationInProgress = NO;
     self.scrollView.contentSize = CGSizeMake([self.pageViews count] * [self columnWidth], [self pageSize].height);
 
     [self currentPageIndexDidChange];
