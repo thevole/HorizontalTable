@@ -39,11 +39,7 @@
 	for (NSUInteger i = 0; i < numberOfPhysicalPages; ++i)
 		[self.pageViews addObject:[NSNull null]];
     
-    if ([self.pageViews count] > 0) {
-        [self layoutPages];
-        [self currentPageIndexDidChange];
- //       [self setPhysicalPageIndex:[self physicalPageForPage:_currentPageIndex]];
-    }
+    [self setNeedsLayout];
 }
 
 - (NSUInteger)numberOfPages {
@@ -163,12 +159,13 @@
 }
 
 - (void)layoutPages {
-	CGSize pageSize = [self pageSize];
+	//CGSize pageSize = [self pageSize];
+    CGSize pageSize = self.bounds.size;
 	self.scrollView.contentSize = CGSizeMake([self.pageViews count] * [self columnWidth], pageSize.height);
 	// move all visible pages to their places, because otherwise they may overlap
-	for (NSUInteger pageIndex = 0; pageIndex < [self.pageViews count]; ++pageIndex)
-		if ([self isPhysicalPageLoaded:pageIndex])
-			[self layoutPhysicalPage:pageIndex];
+//	for (NSUInteger pageIndex = 0; pageIndex < [self.pageViews count]; ++pageIndex)
+//		if ([self isPhysicalPageLoaded:pageIndex])
+//			[self layoutPhysicalPage:pageIndex];
 }
 
 - (id)init {
@@ -189,6 +186,7 @@
     UIScrollView *scroller = [[UIScrollView alloc] init];
     CGRect rect = self.bounds;
     scroller.frame = rect;
+    scroller.backgroundColor = [UIColor blackColor];
 	scroller.delegate = self;
     scroller.autoresizesSubviews = YES;
     scroller.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -196,11 +194,10 @@
 	//self.scrollView.pagingEnabled = YES;
 	scroller.showsHorizontalScrollIndicator = YES;
 	scroller.showsVerticalScrollIndicator = NO;
+    scroller.alwaysBounceVertical = NO;
     self.scrollView = scroller;
 	[self addSubview:scroller];
     [scroller release], scroller = nil;
-    
-	[self refreshData];
 }
 
 
@@ -228,6 +225,9 @@
 	_currentPageIndex = newPageIndex;
 	
 	[self currentPageIndexDidChange];
+    
+    CGSize rect = [self.scrollView contentSize];
+    DLog(@"CSize = %@", NSStringFromCGSize(rect));
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -258,6 +258,11 @@
 	//pageView.frame = [self alignView:pageView forPage:_currentPageIndex inRect:CGRectMake(self.scrollView.contentOffset.x, 0, pageSize.width, pageSize.height)];
 }
 
+- (void)layoutSubviews {
+    [self layoutPages];
+    [self currentPageIndexDidChange];
+}
+
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	// adjust frames according to the new page size - this does not cause any visible changes
 	[self layoutPages];
@@ -269,6 +274,9 @@
 			[self viewForPhysicalPage:pageIndex].hidden = NO;
 	
 	_rotationInProgress = NO;
+    self.scrollView.contentSize = CGSizeMake([self.pageViews count] * [self columnWidth], [self pageSize].height);
+
+    [self currentPageIndexDidChange];
 }
 
 

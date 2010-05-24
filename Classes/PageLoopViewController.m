@@ -62,14 +62,15 @@
     
     
     NSMutableArray *colorArray = [[NSMutableArray alloc] init];
-    NSInteger step = 10;
+    NSInteger step = 5;
     for (NSInteger i = 0; i < 255; i += step) {
         CGFloat f = (float)i/255.0f;
         UIColor *clr = [UIColor colorWithRed:f green:f blue:f alpha:1.0f];
         [colorArray addObject:clr];
     }
     colors = colorArray;
-    [self.tableView refreshData];    
+   // [self.tableView refreshData];    
+    [self.tableView performSelector:@selector(refreshData) withObject:nil afterDelay:0.3f];
 }
 
 
