@@ -38,9 +38,14 @@
 	NSUInteger numberOfPhysicalPages = [self numberOfPages];
 	for (NSUInteger i = 0; i < numberOfPhysicalPages; ++i)
 		[self.pageViews addObject:[NSNull null]];
-    
+    for(UIView *subview in [self.scrollView subviews]) {
+		if([subview isKindOfClass:[UIView class]]) {
+			[subview removeFromSuperview];
+		}
+	}
     [self setNeedsLayout];
 }
+
 
 - (NSUInteger)numberOfPages {
 	NSInteger numPages = 0;
