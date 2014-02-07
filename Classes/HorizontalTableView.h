@@ -22,6 +22,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
+#import "Memory.h"
+
 
 @class HorizontalTableView;
 
@@ -44,12 +46,10 @@
     NSInteger _visibleColumnCount;
     NSNumber *_columnWidth;
     
-    id _delegate;
-    
     NSMutableArray *_columnPool;
 }
 
-@property (assign) IBOutlet id<HorizontalTableViewDelegate> delegate;
+@property (MWeakProperty) IBOutlet id<HorizontalTableViewDelegate> delegate;
 
 - (void)refreshData;
 - (UIView *)dequeueColumnView;
