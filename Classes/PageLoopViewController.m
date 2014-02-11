@@ -23,6 +23,8 @@
 
 #import "PageLoopViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "Memory.h"
+
 
 @implementation PageLoopViewController
 
@@ -32,16 +34,8 @@
 #pragma mark -
 #pragma mark Memory management
 
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     self.tableView = nil;
@@ -49,27 +43,18 @@
 }
 
 
-- (void)dealloc {
-    [tableView release], tableView = nil;
-    [columnView release], columnView = nil;
-    [super dealloc];
+- (void)dealloc
+{
+	tableView.delegate = nil;
+	MRELEASE_NIL(tableView);
+	MRELEASE_NIL(columnView);
+	MSuperDealloc;
 }
 
 #pragma mark -
-
-/*
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
-    }
-    return self;
-}
-*/
-
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     CALayer *layer = [self.tableView layer];
@@ -78,19 +63,20 @@
     
     NSMutableArray *colorArray = [[NSMutableArray alloc] init];
     NSInteger step = 5;
-    for (NSInteger i = 0; i < 255; i += step) {
+    for (NSInteger i = 0; i < 255; i += step)
+	 {
         CGFloat f = (float)i/255.0f;
         UIColor *clr = [UIColor colorWithRed:f green:f blue:f alpha:1.0f];
         [colorArray addObject:clr];
     }
+	
     colors = colorArray;
-   // [self.tableView refreshData];    
     [self.tableView performSelector:@selector(refreshData) withObject:nil afterDelay:0.3f];
 }
 
 
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
     // Overriden to allow any orientation.
     return YES;
 }
@@ -98,14 +84,17 @@
 #pragma mark -
 #pragma mark HorizontalTableViewDelegate methods
 
-- (NSInteger)numberOfColumnsForTableView:(HorizontalTableView *)tableView {
+- (NSInteger)numberOfColumnsForTableView:(HorizontalTableView *)tableView
+{
     return [colors count];
 }
 
-- (UIView *)tableView:(HorizontalTableView *)aTableView viewForIndex:(NSInteger)index {
-    
-    UIView *vw = [aTableView dequeueColumnView];
-    if (!vw) {
+
+- (UIView *)tableView:(HorizontalTableView *)aTableView viewForIndex:(NSInteger)index
+{
+   UIView *vw = [aTableView dequeueColumnView];
+    if (!vw)
+	 {
         DLog(@"Constructing new view");
         
         [[NSBundle mainBundle] loadNibNamed:@"ColumnView" owner:self options:nil];
@@ -114,7 +103,6 @@
         
     }
     [vw setBackgroundColor:[colors objectAtIndex:index]];
-
     
     UILabel *lbl = (UILabel *)[vw viewWithTag:1234];
     lbl.text = [NSString stringWithFormat:@"%d", index];
@@ -122,7 +110,9 @@
 	return vw;
 }
 
-- (CGFloat)columnWidthForTableView:(HorizontalTableView *)tableView {
+
+- (CGFloat)columnWidthForTableView:(HorizontalTableView *)tableView
+{
     return 150.0f;
 }
 

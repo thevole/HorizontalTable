@@ -23,6 +23,7 @@
 
 #import "HorizontalTableView.h"
 
+
 #define kColumnPoolSize 3
 
 @interface HorizontalTableView() <UIScrollViewDelegate>
@@ -44,6 +45,13 @@
 @end
 
 
+@interface HorizontalTableView (Private)
+
+- (void)_removePages;
+
+@end
+
+
 @implementation HorizontalTableView
 
 @synthesize pageViews=_pageViews;
@@ -53,103 +61,146 @@
 @synthesize columnPool=_columnPool;
 
 
-
-- (void)refreshData {
+- (void)refreshData
+{
+	[self _removePages];
     self.pageViews = [NSMutableArray array];
 	// to save time and memory, we won't load the page views immediately
 	NSUInteger numberOfPhysicalPages = [self numberOfPages];
 	for (NSUInteger i = 0; i < numberOfPhysicalPages; ++i)
+	{
 		[self.pageViews addObject:[NSNull null]];
-    
+	}
+   
     [self setNeedsLayout];
 }
 
-- (NSUInteger)numberOfPages {
+
+- (NSUInteger)numberOfPages
+{
 	NSInteger numPages = 0;
-    if (_delegate)
+   
+	if (_delegate)
+	{
         numPages = [_delegate numberOfColumnsForTableView:self];
-    return numPages;
+	}
+	
+   return numPages;
 }
 
-- (UIView *)viewForPhysicalPage:(NSUInteger)pageIndex {
+
+- (UIView *)viewForPhysicalPage:(NSUInteger)pageIndex
+{
 	NSParameterAssert(pageIndex >= 0);
 	NSParameterAssert(pageIndex < [self.pageViews count]);
 	
 	UIView *pageView;
-	if ([self.pageViews objectAtIndex:pageIndex] == [NSNull null]) {
-        
-        if (_delegate) {
+	if ([self.pageViews objectAtIndex:pageIndex] == [NSNull null])
+	{
+        if (_delegate)
+		  {
             pageView = [_delegate tableView:self viewForIndex:pageIndex];
             [self.pageViews replaceObjectAtIndex:pageIndex withObject:pageView];
             [self.scrollView addSubview:pageView];
             DLog(@"View loaded for page %d", pageIndex);
         }
-	} else {
+	}
+	else
+	{
 		pageView = [self.pageViews objectAtIndex:pageIndex];
 	}
+	
 	return pageView;
 }
 
-- (CGSize)pageSize {
-    CGRect rect = self.scrollView.bounds;
+
+- (CGSize)pageSize
+{
+   CGRect rect = self.scrollView.bounds;
 	return rect.size;
 }
 
-- (CGFloat)columnWidth {
-    if (!_columnWidth) {
-        if (_delegate) {
-            CGFloat width = [_delegate columnWidthForTableView:self];
-            _columnWidth = [[NSNumber numberWithFloat:width] retain];
+
+- (CGFloat)columnWidth
+{
+    if (!_columnWidth)
+	 {
+        if (_delegate)
+		  {
+           CGFloat width = [_delegate columnWidthForTableView:self];
+			  MASSIGN_RETAIN(_columnWidth, @(width));
         }
     }
+	
     return [_columnWidth floatValue];
-
 }
 
-- (BOOL)isPhysicalPageLoaded:(NSUInteger)pageIndex {
-	return [self.pageViews objectAtIndex:pageIndex] != [NSNull null];
+
+- (BOOL)isPhysicalPageLoaded:(NSUInteger)pageIndex
+{
+	BOOL isLoaded = [self.pageViews objectAtIndex:pageIndex] != [NSNull null];
+	return isLoaded;
 }
 
-- (void)layoutPhysicalPage:(NSUInteger)pageIndex {
+
+- (void)layoutPhysicalPage:(NSUInteger)pageIndex
+{
 	UIView *pageView = [self viewForPhysicalPage:pageIndex];
-    CGFloat viewWidth = pageView.bounds.size.width;
+	CGFloat viewWidth = pageView.bounds.size.width;
 	CGSize pageSize = [self pageSize];
-    
-    CGRect rect = CGRectMake(viewWidth * pageIndex, 0, viewWidth, pageSize.height);
+	
+	CGRect rect = CGRectMake(viewWidth * pageIndex, 0, viewWidth, pageSize.height);
 	pageView.frame = rect;
 }
 
-- (void)awakeFromNib {
-    [self prepareView];
+
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	[self prepareView];
 }
 
-- (void)queueColumnView:(UIView *)vw {
-    if ([self.columnPool count] >= kColumnPoolSize) {
+
+- (void)queueColumnView:(UIView *)vw
+{
+	if ([self.columnPool count] >= kColumnPoolSize)
+	{
         return;
     }
+	
     [self.columnPool addObject:vw];
 }
 
-- (UIView *)dequeueColumnView {
-    UIView *vw = [[self.columnPool lastObject] retain];
-    if (vw) {
+
+- (UIView *)dequeueColumnView
+{
+	UIView *vw = nil;
+	MASSIGN_RETAIN(vw, [self.columnPool lastObject]);
+   if (vw)
+	{
         [self.columnPool removeLastObject];
         DLog(@"Supply from reuse pool");
-    }
-    return [vw autorelease];
+   }
+	
+	return MReturnAutoreleased(vw);
 }
 
-- (void)removeColumn:(NSInteger)index {
-    if ([self.pageViews objectAtIndex:index] != [NSNull null]) {
-        DLog(@"Removing view at position %d", index);
-        UIView *vw = [self.pageViews objectAtIndex:index];
-        [self queueColumnView:vw];
-        [vw removeFromSuperview];
-        [self.pageViews replaceObjectAtIndex:index withObject:[NSNull null]];
-    }
+
+- (void)removeColumn:(NSInteger)index
+{
+	if ([self.pageViews objectAtIndex:index] != [NSNull null])
+	{
+		DLog(@"Removing view at position %d", index);
+		UIView *vw = [self.pageViews objectAtIndex:index];
+		[self queueColumnView:vw];
+		[vw removeFromSuperview];
+		[self.pageViews replaceObjectAtIndex:index withObject:[NSNull null]];
+	}
 }
 
-- (void)currentPageIndexDidChange {
+
+- (void)currentPageIndexDidChange
+{
     CGSize pageSize = [self pageSize];
     CGFloat columnWidth = [self columnWidth];
     _visibleColumnCount = pageSize.width / columnWidth + 2;
@@ -157,50 +208,62 @@
     NSInteger leftMostPageIndex = -1;
     NSInteger rightMostPageIndex = 0;
     
-    for (NSInteger i = -2; i < _visibleColumnCount; i++) {
+    for (NSInteger i = -2; i < _visibleColumnCount; i++)
+	 {
         NSInteger index = _currentPhysicalPageIndex + i;
-        if (index < [self.pageViews count] && (index >= 0)) {
+        if (index < [self.pageViews count] && (index >= 0))
+		  {
             [self layoutPhysicalPage:index];
             if (leftMostPageIndex < 0)
-                leftMostPageIndex = index;
+				{
+					leftMostPageIndex = index;
+				}
             rightMostPageIndex = index;
         }
     }
     
     // clear out views to the left
-    for (NSInteger i = 0; i < leftMostPageIndex; i++) {
+    for (NSInteger i = 0; i < leftMostPageIndex; i++)
+	 {
         [self removeColumn:i];
     }
     
     // clear out views to the right
-    for (NSInteger i = rightMostPageIndex + 1; i < [self.pageViews count]; i++) {
+    for (NSInteger i = rightMostPageIndex + 1; i < [self.pageViews count]; i++)
+	 {
         [self removeColumn:i];
     }
-
- 
 }
 
-- (void)layoutPages {
+
+- (void)layoutPages
+{
     CGSize pageSize = self.bounds.size;
 	self.scrollView.contentSize = CGSizeMake([self.pageViews count] * [self columnWidth], pageSize.height);
 }
 
-- (id)init {
+
+- (id)init
+{
     self = [super init];
-    if (self) {
+    if (self)
+	 {
         [self prepareView];
     }
+	
     return self;
 }
 
-- (void)prepareView {
-	_columnPool = [[NSMutableArray alloc] initWithCapacity:kColumnPoolSize];
-    _columnWidth = nil;
+
+- (void)prepareView
+{
+	MASSIGN_RETAIN(_columnPool, [NSMutableArray arrayWithCapacity:kColumnPoolSize]);
+	MRELEASE_NIL(_columnWidth);
     [self setClipsToBounds:YES];
     
     self.autoresizesSubviews = YES;
     
-    UIScrollView *scroller = [[UIScrollView alloc] init];
+    UIScrollView *scroller = MReturnAutoreleased([[UIScrollView alloc] init]);
     CGRect rect = self.bounds;
     scroller.frame = rect;
     scroller.backgroundColor = [UIColor blackColor];
@@ -214,16 +277,18 @@
     scroller.alwaysBounceVertical = NO;
     self.scrollView = scroller;
 	[self addSubview:scroller];
-    [scroller release], scroller = nil;
 }
 
 
-- (NSUInteger)physicalPageIndex {
+- (NSUInteger)physicalPageIndex
+{
     NSUInteger page = self.scrollView.contentOffset.x / [self columnWidth];
     return page;
 }
 
-- (void)setPhysicalPageIndex:(NSUInteger)newIndex {
+
+- (void)setPhysicalPageIndex:(NSUInteger)newIndex
+{
 	self.scrollView.contentOffset = CGPointMake(newIndex * [self pageSize].width, 0);
 }
 
@@ -231,7 +296,8 @@
 #pragma mark -
 #pragma mark UIScrollViewDelegate methods
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
     //DLog(@"Did Scroll");
 	
 	NSUInteger newPageIndex = self.physicalPageIndex;
@@ -245,24 +311,33 @@
     DLog(@"CSize = %@", NSStringFromCGSize(rect));
 }
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
 }
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
 	DLog(@"scrollViewDidEndDecelerating");
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
 
-- (void)layoutSubviews {
+- (void)layoutSubviews
+{
     [self layoutPages];
     [self currentPageIndexDidChange];
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
 	// adjust frames according to the new page size - this does not cause any visible changes
 	[self layoutPages];
 	self.physicalPageIndex = _currentPhysicalPageIndex;
@@ -278,12 +353,31 @@
 }
 
 
-- (void)dealloc {
-    [_columnPool release], _columnPool = nil;
-    [_columnWidth release], _columnWidth = nil;
-    [_pageViews release], _pageViews = nil;
-    [_scrollView release], _scrollView = nil;
-    [super dealloc];
+- (void)dealloc
+{
+	MRELEASE_NIL(_columnPool);
+	MRELEASE_NIL(_columnWidth);
+	MRELEASE_NIL(_pageViews);
+	MRELEASE_NIL(_scrollView);
+	MSuperDealloc;
+}
+
+@end
+
+
+#pragma mark -
+@implementation HorizontalTableView (Private)
+
+- (void)_removePages
+{
+	[self.pageViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+		if ([obj respondsToSelector:@selector(removeFromSuperview)])
+		{
+			[obj removeFromSuperview];
+		}
+	}];
+	
+	[self.pageViews removeAllObjects];
 }
 
 @end

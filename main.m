@@ -22,11 +22,13 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
+#import "Memory.h"
 
-int main(int argc, char *argv[]) {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    int retVal = UIApplicationMain(argc, argv, nil, @"ScrollerAppDelegate");
-    [pool release];
-    return retVal;
+int main(int argc, char *argv[])
+{
+   int retVal = 0;
+	MStartAutoreleasePoll
+   retVal  = UIApplicationMain(argc, argv, nil, @"ScrollerAppDelegate");
+	MEndAutoreleasePoll
+	return retVal;
 }

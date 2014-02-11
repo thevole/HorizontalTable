@@ -1,0 +1,10 @@
+
+*.xcworkspacedata
+
+*.xcuserstate
+
+*.xcscheme
+
+*/xcschememanagement.plist
+
+Scroller.xcodeproj/xcuserdata/andrewromanov.xcuserdatad/xcschemes/xcschememanagement.plist
