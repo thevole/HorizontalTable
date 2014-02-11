@@ -23,12 +23,13 @@
 
 #import "ScrollerAppDelegate.h"
 #import "PageLoopViewController.h"
+#import "Memory.h"
 
 @implementation ScrollerAppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
+   
     viewController = [[PageLoopViewController alloc] init];
     
     window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -42,9 +43,10 @@
 
 
 - (void)dealloc {
-    [viewController release];
-    [window release];
-    [super dealloc];
+	MRELEASE_NIL(viewController);
+	MRELEASE_NIL(window);
+	
+	MSuperDealloc;
 }
 
 
