@@ -371,7 +371,10 @@
 - (void)_removePages
 {
 	[self.pageViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-		[obj removeFromSuperview];
+		if ([obj respondsToSelector:@selector(removeFromSuperview)])
+		{
+			[obj removeFromSuperview];
+		}
 	}];
 	
 	[self.pageViews removeAllObjects];
